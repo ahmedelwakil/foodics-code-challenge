@@ -1,0 +1,31 @@
+version: '3'
+volumes:
+  db-data:
+
+services:
+  foodics-api:
+    build: .
+    restart: always
+    container_name: foodics-api
+    volumes:
+      - ./:/var/www/html
+    ports:
+      - 8097:80
+    depends_on:
+      - foodics-mysql
+
+  foodics-mysql:
+    image: mysql:8.0.29
+    restart: always
+    container_name: foodics-mysql
+    volumes:
+      - db-data:/var/lib/mysql
+    ports:
+      - 8098:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_HOST=foodics-mysql
+      - MYSQL_PORT=8098
+      - MYSQL_DATABASE=foodics
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
