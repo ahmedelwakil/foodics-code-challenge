@@ -31,6 +31,15 @@ RUN a2enmod headers
 #Copy php.ini
 COPY deploy-docker/php.ini /usr/local/etc/php/php.ini
 
+#Install Queue Worker
+RUN apt-get install python3-pip -y
+RUN apt-get install supervisor -y
+COPY deploy-docker/supervisord.conf /etc/supervisor/supervisord.conf
+COPY deploy-docker/queue-worker.conf /etc/supervisor/conf.d/laravel-queue-worker.conf
+RUN touch /var/run/supervisor.sock
+RUN chmod 777 /var/run/supervisor.sock
+RUN chmod 777 -R /usr/lib/python3/dist-packages/supervisor/
+
 #add run.sh
 RUN chmod +x deploy-docker/run.sh
 RUN bash -c 'mkdir -p /var/www/html/storage/{logs,framework/sessions,framework/views,framework/cache,data}'
