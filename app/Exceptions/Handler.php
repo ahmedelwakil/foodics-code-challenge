@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Utils\HttpStatusCodeUtil;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -22,7 +23,7 @@ class Handler extends ExceptionHandler
      * @var array<int, class-string<\Throwable>>
      */
     protected $dontReport = [
-        //
+        EntityNotFoundException::class,
     ];
 
     /**
@@ -36,15 +37,10 @@ class Handler extends ExceptionHandler
         'password_confirmation',
     ];
 
-    /**
-     * Register the exception handling callbacks for the application.
-     *
-     * @return void
-     */
-    public function register()
+    public function render($request, Throwable $exception)
     {
-        $this->reportable(function (Throwable $e) {
-            //
-        });
+        if (in_array(get_class($exception), $this->dontReport))
+            return response()->json(['payload' => ['message' => $exception->getMessage()]], HttpStatusCodeUtil::BAD_REQUEST, [], JSON_INVALID_UTF8_IGNORE);
+        return response()->json(['payload' => ['message' => 'Something Went Wrong!']], HttpStatusCodeUtil::SERVER_ERROR, [], JSON_INVALID_UTF8_IGNORE);
     }
 }
