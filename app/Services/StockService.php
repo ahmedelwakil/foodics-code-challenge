@@ -19,4 +19,13 @@ class StockService extends BaseService
     {
         parent::__construct($stockRepository);
     }
+
+    /**
+     * @param array $ingredientIds
+     * @return array
+     */
+    public function findByIngredientIds(array $ingredientIds)
+    {
+        return $this->repository->findByIngredientIds($ingredientIds);
+    }
 }
