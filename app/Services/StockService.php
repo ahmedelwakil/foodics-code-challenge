@@ -35,7 +35,8 @@ class StockService extends BaseService
     public function checkThreshold(Stock $stock, float $nemAmount)
     {
         if (!$stock->merchant_notified && $nemAmount <= $stock->threshold) {
-            Mail::to('ahmed-tfelwakil@hotmail.com')->send(new StockBelowThreshold($stock));
+            $mailTo = env('LOW_STOCK_NOTIFY_EMAIL', 'ahmed-tfelwakil@hotmail.com');
+            Mail::to($mailTo)->send(new StockBelowThreshold($stock));
             $this->repository->update($stock->id, ['merchant_notified' => true]);
         }
     }
