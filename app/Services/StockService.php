@@ -32,6 +32,10 @@ class StockService extends BaseService
         return $this->repository->findByIngredientIds($ingredientIds);
     }
 
+    /**
+     * @param Stock $stock
+     * @param float $nemAmount
+     */
     public function checkThreshold(Stock $stock, float $nemAmount)
     {
         if (!$stock->merchant_notified && $nemAmount <= $stock->threshold) {

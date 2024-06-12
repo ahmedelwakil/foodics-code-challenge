@@ -6,6 +6,7 @@ use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -95,6 +96,7 @@ abstract class BaseRepository
      */
     public function insert(array $data)
     {
+        $data = $this->appendTimestamps($data);
         return $this->model->insert($data);
     }
 
@@ -104,6 +106,7 @@ abstract class BaseRepository
      */
     public function insertGetId(array $data)
     {
+        $data = $this->appendTimestamps($data);
         return $this->model->insertGetId($data);
     }
 
@@ -113,6 +116,7 @@ abstract class BaseRepository
      */
     public function insertOrIgnore(array $data)
     {
+        $data = $this->appendTimestamps($data);
         return $this->model->insertOrIgnore($data);
     }
 
@@ -186,5 +190,35 @@ abstract class BaseRepository
     public function delete(array $ids)
     {
         return $this->model->whereIn($this->getPrimaryKeyName(), $ids)->delete();
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    protected function appendTimestamps(array $data)
+    {
+        if (!$this->model->usesTimestamps())
+            return $data;
+
+        $now = now();
+        $createdAtColumn = $this->model->getCreatedAtColumn();
+        $updatedAtColumn = $this->model->getUpdatedAtColumn();
+
+        if (Arr::isAssoc($data)) {
+            return array_merge($data, [
+                $createdAtColumn => $now,
+                $updatedAtColumn => $now
+            ]);
+        } else {
+            $newData = [];
+            foreach ($data as $record) {
+                $newData[] = array_merge($record, [
+                    $createdAtColumn => $now,
+                    $updatedAtColumn => $now
+                ]);
+            }
+            return $newData;
+        }
     }
 }

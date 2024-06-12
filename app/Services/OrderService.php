@@ -79,16 +79,18 @@ class OrderService extends BaseService
 
         if ($this->validateStockLevels($stocks, $stockLevels)) {
             $this->applyInTransaction(function () use ($order, $stocks, $stockLevels) {
+                $stockTransactions = [];
                 foreach ($stockLevels as $ingredientId => $level) {
                     $stock = $stocks[$ingredientId];
-                    $this->stockTransactionService->insert([
+                    $stockTransactions[] = [
                         'order_id' => $order->id,
                         'stock_id' => $stock->id,
                         'amount' => $level
-                    ]);
+                    ];
                     $this->stockService->update($stock->id, ['amount' => $stock->amount - $level]);
                     $this->stockService->checkThreshold($stock, $stock->amount - $level);
                 }
+                $this->stockTransactionService->insert($stockTransactions);
                 $this->repository->update($order->id, ['status' => OrderStatusUtil::CONFIRMED]);
             });
         } else {

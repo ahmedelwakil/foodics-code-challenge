@@ -19,8 +19,7 @@ return new class extends Migration
             $table->foreignId('product_id');
             $table->foreignId('ingredient_id');
             $table->float('amount')->nullable(false);
-            $table->timestamp('created_at')->nullable(false)->default(DB::raw('CURRENT_TIMESTAMP'));
-            $table->timestamp('updated_at')->nullable(false)->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
+            $table->timestamps();
             $table->foreign('product_id')->references('id')->on('products');
             $table->foreign('ingredient_id')->references('id')->on('ingredients');
         });

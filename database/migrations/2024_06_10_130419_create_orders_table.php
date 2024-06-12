@@ -19,8 +19,7 @@ return new class extends Migration
             $table->id();
             $table->enum('status', OrderStatusUtil::getAllStatuses())->nullable(false)->default(OrderStatusUtil::PENDING);
             $table->softDeletes();
-            $table->timestamp('created_at')->nullable(false)->default(DB::raw('CURRENT_TIMESTAMP'));
-            $table->timestamp('updated_at')->nullable(false)->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
+            $table->timestamps();
         });
     }
 
