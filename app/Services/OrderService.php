@@ -87,6 +87,7 @@ class OrderService extends BaseService
                         'amount' => $level
                     ]);
                     $this->stockService->update($stock->id, ['amount' => $stock->amount - $level]);
+                    $this->stockService->checkThreshold($stock, $stock->amount - $level);
                 }
                 $this->repository->update($order->id, ['status' => OrderStatusUtil::CONFIRMED]);
             });

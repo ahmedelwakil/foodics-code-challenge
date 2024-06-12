@@ -42,9 +42,9 @@ class DatabaseSeeder extends Seeder
         ]);
 
         /** Seeding Stocks Table */
-        Stock::factory()->create(['ingredient_id' => $beef->id, 'amount' => 20000]);
-        Stock::factory()->create(['ingredient_id' => $chicken->id, 'amount' => 20000]);
-        Stock::factory()->create(['ingredient_id' => $cheese->id, 'amount' => 5000]);
-        Stock::factory()->create(['ingredient_id' => $onion->id, 'amount' => 1000]);
+        Stock::factory()->create(['ingredient_id' => $beef->id, 'amount' => 20000, 'threshold' => 10000]);
+        Stock::factory()->create(['ingredient_id' => $chicken->id, 'amount' => 20000, 'threshold' => 10000]);
+        Stock::factory()->create(['ingredient_id' => $cheese->id, 'amount' => 5000, 'threshold' => 2500]);
+        Stock::factory()->create(['ingredient_id' => $onion->id, 'amount' => 1000, 'threshold' => 500]);
     }
 }

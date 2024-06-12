@@ -2,7 +2,10 @@
 
 namespace App\Services;
 
+use App\Mail\StockBelowThreshold;
+use App\Models\Stock;
 use App\Repositories\StockRepository;
+use Illuminate\Support\Facades\Mail;
 
 class StockService extends BaseService
 {
@@ -27,5 +30,13 @@ class StockService extends BaseService
     public function findByIngredientIds(array $ingredientIds)
     {
         return $this->repository->findByIngredientIds($ingredientIds);
+    }
+
+    public function checkThreshold(Stock $stock, float $nemAmount)
+    {
+        if (!$stock->merchant_notified && $nemAmount <= $stock->threshold) {
+            Mail::to('ahmed-tfelwakil@hotmail.com')->send(new StockBelowThreshold($stock));
+            $this->repository->update($stock->id, ['merchant_notified' => true]);
+        }
     }
 }

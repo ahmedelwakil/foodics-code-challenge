@@ -20,6 +20,8 @@ class Stock extends Model
     protected $fillable = [
         'ingredient_id',
         'amount',
+        'threshold',
+        'merchant_notified',
     ];
 
     /**
