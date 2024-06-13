@@ -7,10 +7,6 @@ php artisan migrate:install
 php artisan migrate
 ./vendor/bin/phpunit
 php artisan db:seed
-#php artisan jwt:secret --force
 service supervisor start
-#supervisorctl reload
-#supervisorctl reread
-#supervisorctl update
 supervisorctl start 'laravel-queue-worker:*'
 apache2-foreground

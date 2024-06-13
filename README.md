@@ -1,66 +1,70 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<p>
+    <h1>Foodics Coding Challenge</h1>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## About Project
+This project is a small demo for creating order and managing inventory stocks.
 
-## About Laravel
+## Project Deployment
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Steps on how to deploy (Make sure docker-compose is installed on your machine):
+- Clone project on your local machine
+- Open the command line and change the current directory to the project directory
+- Create <b>[.env](./.env)</b> file and copy it's content from the <b>[.env.deploy](./deploy-docker/.env.deploy)</b>
+- Update mail environment variables to actually receive the mail (I used MailTrap sandbox mode to test the mails)
+- Run Command ```docker-compose up -d```
+- Enjoy! :star_struck:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+<b>**Note</b> The main process of processing orders are managed using background jobs. This was done to apply queueable order processing and to avoid any race condition on the stocks records.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+<b>**Note</b> The deployment seeds the database automatically. Please refer to the <b>[run.sh](./deploy-docker/run.sh)</b> bash file. It contains the commands that the docker container executes after creating the container. 
 
-## Learning Laravel
+The project will install 2 docker containers:
+- **MySQL Container**
+- **Laravel Application Container**
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+To access any of the containers run ```docker exec -it {container-name} bash```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+To Run Unit Tests:
+- Access the Application Container ```docker exec -it foodics-api bash```
+- Run the tests command ```./vendor/bin/phpunit```
+- The testing environment uses on SQL Lite and runs in memory
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## What is Implemented
+- Docker Containers & Deployment (Application Container - Database Container)
+- Application Configuration
+- Control - Service - Repository Architecture
+- Database Design & Data [Migrations](./database/migrations)
+- Supervisor & Queue worker for managing background jobs
+- [Factories](./database/factories) & [Seeders](./database/seeders)
+- Clean Code
+  - Custom [Exceptions](./app/Exceptions)
+  - Entities [Controllers](./app/Http/Controllers)
+  - Entities [Services](./app/Services)
+  - Entities [Repositories](./app/Repositories)
+  - Entities [Models](./app/Models)
+  - Entities [Creation & Response Units](./app/Units)
+  - Constant [Utility Classes](./app/Utils)
+  - Dispatched [Jobs](./app/Jobs)
+- Unit & Feature [Tests](./tests)
+- Readme [File](./README.md)
 
-## Laravel Sponsors
+## Project Architecture
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+The project is developed using **Controller - Service - Repository architecture**
+- **Controller Layer**: Gather data from request, performs validation and pass user input data to service.
+- **Service Layer**: The middleware between controller and repository. It is responsible for gathering data from controllers, performing business logic, and calling repositories for data manipulation.
+- **Repository Layer**: Layer for interaction with models and performing DB operations.
 
-### Premium Partners
+This provides a clear separation of responsibilities and achieve many degrees of the **SOLID Principles** which reduces dependencies and make the project better in readability, maintainability, design patterns, and testability.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+Each of this layer has its own **Abstract Base Class** which provides the common operations for this layer. 
+- **BaseModel**
+- **BaseRepository**
+- **BaseService**
+- **BaseController**
 
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Also, you can find different code structures for single responsibilities such as:
+- **Exceptions**
+- **Units**
+- **Utils**
+- **..etc**
