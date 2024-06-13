@@ -102,7 +102,7 @@ class OrderService extends BaseService
      * @param Order $order
      * @return array
      */
-    private function calculateStockLevels(Order $order)
+    public function calculateStockLevels(Order $order)
     {
         $stockLevels = [];
         foreach ($order->products as $product) {

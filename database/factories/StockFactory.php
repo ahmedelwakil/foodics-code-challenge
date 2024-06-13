@@ -15,6 +15,8 @@ class StockFactory extends Factory
     {
         return [
             'amount' => fake()->randomFloat(),
+            'threshold' => fake()->randomFloat(),
+            'merchant_notified' => fake()->boolean(),
         ];
     }
 }
